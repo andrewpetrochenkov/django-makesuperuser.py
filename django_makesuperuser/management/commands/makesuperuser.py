@@ -28,7 +28,6 @@ class Command(createsuperuser.Command):
             raise CommandError("--username and --password are required")
 
         data = {'username': username,'password': password,'email': email}
-        User.objects.create_superuser(username='name',email='email',password='password')
         try:
             self.UserModel._default_manager.db_manager(database).create_superuser(**data)
         except django.db.utils.IntegrityError:

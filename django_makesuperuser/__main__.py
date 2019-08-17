@@ -23,8 +23,8 @@ def _cli(username,password,email=None):
     django.setup()
     from django.contrib.auth.models import User
     try:
-        user = User.objects.get(username="username")
-        user.set_password('password')
+        user = User.objects.get(username=username)
+        user.set_password(password)
         user.save()
     except User.DoesNotExist:
         pass
