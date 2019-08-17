@@ -1,14 +1,14 @@
 import django
 from django.contrib.auth.management.commands import createsuperuser
 from django.core.management import CommandError
+from django.db import DEFAULT_DB_ALIAS
 
 """
+settings.py:
+INSTALLED_APPS+= ["django_makesuperuser"]
+
 python manage.py makesuperuser --username admin --password admin
 python manage.py makesuperuser --username admin --password admin --email foo@foo.foo
-
-settings.py:
-if DEBUG:
-    INSTALLED_APPS+= ["django_makesuperuser"]
 """
 
 class Command(createsuperuser.Command):
@@ -19,15 +19,16 @@ class Command(createsuperuser.Command):
         parser.add_argument('--password', dest='password', default=None)
 
     def handle(self, *args, **options):
-        database = options.get('database')
-        password = options.get('password')
         username = options.get('username')
+        password = options.get('password')
         email = options.get('email')
 
+        database = DEFAULT_DB_ALIAS
         if not password or not username:
             raise CommandError("--username and --password are required")
 
         data = {'username': username,'password': password,'email': email}
+        User.objects.create_superuser(username='name',email='email',password='password')
         try:
             self.UserModel._default_manager.db_manager(database).create_superuser(**data)
         except django.db.utils.IntegrityError:
