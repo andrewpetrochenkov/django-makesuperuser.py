@@ -22,12 +22,11 @@ USAGE = 'python -m %s username password [email]' % MODULE_NAME
 def _cli(username,password,email=None):
     django.setup()
     from django.contrib.auth.models import User
-    try:
-        user = User.objects.get(username=username)
-        user.set_password(password)
-        user.save()
-    except User.DoesNotExist:
-        pass
+    user, created = User.objects.get_or_create(username=username)
+    user.set_password(password)
+    if email:
+        user.email = email
+    user.save()
 
 if __name__ == '__main__':
     _cli(prog_name=PROG_NAME)
